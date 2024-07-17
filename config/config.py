@@ -13,15 +13,19 @@ SELECT_DEVICE_VERSION = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-d
 SELECT_LAST_VERSION = "/html/body/div[2]/div[4]/div/div/div/mat-option[2]/span"
 STATE ="/html/body/app-root/div/div/app-device-details/form/div/div[2]/div[3]/div/div[2]/div[2]/div"
 SAVE_VERSION_BUTTON = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-specific-sw-edit/form/div[2]/button[1]"
-DERIGISTERATE_BTN = "//span[@class='mat-button-wrapper' and contains(text(), 'Deregistration')]"
-DERIGISTERATE_CONFIRM_BTN = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-dereg/form/div[3]/button[1]/span"
+DEREGISTERATE_BTN = "//span[@class='mat-button-wrapper' and contains(text(), 'Deregistration')]"
+DEREGISTERATE_CONFIRM_BTN = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-dereg/form/div[3]/button[1]/span"
 REGISTERATE_DEVICE_BTN = "//span[@class='mat-button-wrapper' and contains(text(), 'Registration')]"
 SELECT_REGISTRATOR = "//*[contains(@class, 'fa-search')]"
 SELECT_FIRST_REGISTRATOR = "(//*[contains(@class, 'fa-square')])[1]"
+SELECT_FOURTH_REGISTRATOR = "(//*[contains(@class, 'fa-square')])[4]"
 REGISTERATE_CONFIRM_BTN = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-reg/form/div[3]/button[1]"
+SELECT_MODE = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-reg/form/div[2]/div/mat-form-field[2]/div/div[1]/div/mat-select/div/div[1]/span/span"
+SELECT_LEASE_MODE = "/html/body/div[2]/div[4]/div/div/div/mat-option[3]/span"
 
 # Current test
 # //////////////////////////////////////////////
 CURRENT_USERNAME = 'abachev'
 CURRENT_PASSWORD = 'RideTheWaves@8am'
 CURRENT_SERIAL_NUM  = '53998'
+CURRENT_MODE = 'Private'

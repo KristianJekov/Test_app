@@ -5,11 +5,6 @@ from selenium.webdriver.support import expected_conditions as EC
 
 import time
 
-# def wait_for_page_load(driver, timeout=10):
-#     wait(driver, timeout).until(
-#         lambda d: d.execute_script('return document.readyState') == 'complete'
-#     )
-
 def wait_for_page_load(driver, timeout=10):
     while True:
         ready_state = driver.execute_script('return document.readyState')
