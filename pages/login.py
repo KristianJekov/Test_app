@@ -22,5 +22,5 @@ def login(driver):
     login_button.click()
 
 
-    time.sleep(2)
+    wait_for_page_load(driver)
  

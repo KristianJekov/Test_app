@@ -10,7 +10,7 @@ def filter_devices(driver):
     devices_tab = driver.find_element(By.XPATH, config.DEVICES_TAB)
     devices_tab.click()
 
-    time.sleep(4)
+    time.sleep(5)
    
 
     select_device_type = driver.find_element(By.ID, config.SELECT_DEVICE_TYPE)
