@@ -24,7 +24,5 @@ def edit_curr_device(driver):
     select_last_version_button = driver.find_element(By.XPATH, config.SELECT_LAST_VERSION)
     select_last_version_button.click()
 
-    time.sleep(0.25)
-
     save_version_button = driver.find_element(By.XPATH, config.SAVE_VERSION_BUTTON)
     save_version_button.click()
