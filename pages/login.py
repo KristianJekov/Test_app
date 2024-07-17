@@ -15,7 +15,7 @@ def login(driver):
     password.send_keys(config.CURRENT_PASSWORD)
 
 
-    time.sleep(1.5)
+    time.sleep(2)
 
     login_button = driver.find_element(By.XPATH, config.LOGIN_BUTTON)
     login_button.click()
