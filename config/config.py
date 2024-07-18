@@ -7,7 +7,7 @@ SELECT_DEVICE_TYPE = 'mat-select-0'
 SELECT_TYPE = 'mat-option-12' # hydrofoil option in the dropdown menu 
 INPUT_SERIAL_NUMBER = 'mat-input-4'
 FIRST_DEVICE = '/html/body/app-root/div/div/app-device-list/form/div[3]/table/tbody/tr/td[1]/button/span/span'
-EDIT_DEVICE_VERSION = "//*[contains(@class, 'fa-pen')]"
+EDIT_DEVICE_VERSION = "(//*[contains(@class, 'fa-pen')])[2]"
 SELECT_SPECIFIC_VERSION = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-specific-sw-edit/form/mat-radio-group/mat-radio-button[2]/label/div[2]"
 SELECT_DEVICE_VERSION = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-specific-sw-edit/form/mat-form-field/div/div[1]/div/mat-select/div/div[1]/span/span"
 SELECT_LAST_VERSION = "/html/body/div[2]/div[4]/div/div/div/mat-option[2]/span"
@@ -28,4 +28,8 @@ SELECT_LEASE_MODE = "/html/body/div[2]/div[4]/div/div/div/mat-option[3]/span"
 CURRENT_USERNAME = 'abachev'
 CURRENT_PASSWORD = 'RideTheWaves@8am'
 CURRENT_SERIAL_NUM  = '53998'
-CURRENT_MODE = 'Private'
+CURRENT_MODE = {
+    'p': 'Private',
+    'b': 'Business',
+    'l': 'Lease'
+}
