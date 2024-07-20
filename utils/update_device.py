@@ -7,3 +7,6 @@ def update_to_last_version():
     select_device()
     edit_curr_device(driver)
     
+def update_specific_version(version):
+    select_device()
+    edit_curr_device(driver, version)

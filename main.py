@@ -1,4 +1,4 @@
-from utils.update_device import update_to_last_version
+from utils.update_device import update_to_last_version, update_specific_version
 from utils.mode_select import registerate_device_in_mode
 from config import config
 
@@ -9,7 +9,14 @@ def main():
                   "To registerate the device in specific mode, type r\n")
     if answer == "u":
         print("-----UPDATER------")
-        update_to_last_version()
+        update = input("To update to the last version, type l\n" +
+                       "To update to specific version, type s\n")
+        if update == "l":
+            update_to_last_version()
+        elif update == "s":
+            version = input("Enter the version you want to update to: ")
+            update_specific_version(str(version))
+            
         
     elif answer == "r":
         print("-----REGISTRATOR------")
