@@ -14,7 +14,7 @@ def main():
         if update == "l":
             update_to_last_version()
         elif update == "s":
-            version = input("Enter the version you want to update to: ")
+            version = input("Enter the version you want to update to:\n")
             update_specific_version(str(version))
             
         
