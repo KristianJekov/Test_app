@@ -22,12 +22,14 @@ SELECT_FOURTH_REGISTRATOR = "(//*[contains(@class, 'fa-square')])[4]"
 REGISTERATE_CONFIRM_BTN = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-reg/form/div[3]/button[1]"
 SELECT_MODE = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-reg/form/div[2]/div/mat-form-field[2]/div/div[1]/div/mat-select/div/div[1]/span/span"
 SELECT_LEASE_MODE = "/html/body/div[2]/div[4]/div/div/div/mat-option[3]/span"
+BOTTOM_MASSAGE = '//*[@id="toast-container"]'
 
 # Current test
 # //////////////////////////////////////////////
+FIRST_TEST  = True
 CURRENT_USERNAME = 'abachev'
 CURRENT_PASSWORD = 'RideTheWaves@8am'
-CURRENT_SERIAL_NUM  = '53998'
+CURRENT_SERIAL_NUM  = '53991'
 CURRENT_MODE = {
     'p': 'Private',
     'b': 'Business',

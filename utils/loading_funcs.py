@@ -23,3 +23,14 @@ def wait_for_element(driver, element):
             print("Waiting for devices to load...")
             time.sleep(0.1)
             break
+
+def wait_for_massage_to_dissapear(driver, element):
+    while True:
+        time.sleep(0.1)
+        try:
+            WebDriverWait(driver,timeout=6).until_not(EC.presence_of_element_located((By.XPATH, element)))
+            break
+        except:
+            print("Waiting for devices to load...")
+            time.sleep(0.1)
+            break
