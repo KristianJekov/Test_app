@@ -27,7 +27,6 @@ def registerate_device_in_mode(mode):
         deregisterate_confirm.click()
 
 
-
     wait_for_element(driver,config.REGISTERATE_DEVICE_BTN)
 
     register_btn = driver.find_element(By.XPATH, config.REGISTERATE_DEVICE_BTN)
@@ -55,6 +54,7 @@ def registerate_device_in_mode(mode):
 
         select_lease = driver.find_element(By.XPATH, config.SELECT_LEASE_MODE)
         select_lease.click()
+
 
 
     registerate_confirm = driver.find_element(By.XPATH, config.REGISTERATE_CONFIRM_BTN)
