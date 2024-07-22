@@ -4,8 +4,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from config import config
 import time
-
-
     
 def registerate_device_in_mode(mode):
     
