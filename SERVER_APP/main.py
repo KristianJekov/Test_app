@@ -1,4 +1,5 @@
 from utils.navigation_menu import navigation_menu
+from utils.select_device import driver
 from config import config
 
 
@@ -14,6 +15,7 @@ def main():
 
             else: 
                 print("Exiting the program")
+                driver.close()
                 break
             
 
