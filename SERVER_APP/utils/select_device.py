@@ -11,4 +11,3 @@ def select_device():
     login(driver)
     filter_devices(driver)
    
-    

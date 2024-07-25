@@ -1,8 +1,30 @@
 import serial
+import time 
 
-ser = serial.Serial('COM17', 921600)
+high = False
+low = True
+
+ser = serial.Serial(baudrate=921600)
+ser.port = "COM17"
+
+
+ser.dtr = low
+ser.rts = high
+ser.dtr = ser.dtr
+ser.open()
+
+ser.dtr = high
+ser.rts = low
+ser.dtr = ser.dtr
+
+time.sleep(0.005)
+
+ser.rts = high
+ser.dtr = ser.dtr
+
+line = ser.readline()
+
 
 while True:
-    line = ser.readline()
-    valueinString =str(line, "UTF-8")
-    print(valueinString)
+    line = ser.readline().decode('utf-8').rstrip()
+    print(line)
