@@ -3,6 +3,7 @@ from utils.loading_funcs import wait_for_element
 from config import config
 
 
+
 def edit_curr_device(driver, version=0):
 
     wait_for_element(driver, config.EDIT_DEVICE_VERSION)
