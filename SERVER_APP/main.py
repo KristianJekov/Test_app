@@ -16,8 +16,7 @@ def main():
             else: 
                 print("Exiting the program")
                 driver.close()
-                break
-            
+                break     
 
 if __name__ == '__main__':
     main()
