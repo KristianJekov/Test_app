@@ -7,7 +7,7 @@ ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 def print_colored(text, color_code):
     print(f"\033[{color_code}m{text}\033[0m")
 
-# Color codes for text
+
 colors = {
     "black": "30",
     "red": "31",
@@ -37,6 +37,7 @@ def check_sensor_hub_ver(line, dict):
         dict[key] = sensor_ver
         print(f"{key}: {dict[key]}")
 
+
 def check_batt_ver(line, dict):
     if line.__contains__("btdevmng: battery - firmware version:"):
         batt_ver_raw = line[-22:]
@@ -54,9 +55,9 @@ def check_remote_ver(line, dict):
         dict[key] = remote_ver
         print(f"{key}: {dict[key]}")
 
+
 def check_if_all_ver_equal(dict):
     if len(dict) == 4 or len(dict) == 3:
-        # print('\n'.join(f"{key}: {value}" for key, value in dict.items()))
 
         values = dict.values()
        
@@ -64,7 +65,9 @@ def check_if_all_ver_equal(dict):
        
         if len(unique_values) == 1:
             return  print_colored("All devices have the same version", colors["green"])
+        
         else:
-         return print_colored("Not all devices have the same version", colors["red"])
+            return print_colored("Not all devices have the same version", colors["red"])
+        
     return True
                                                                      
