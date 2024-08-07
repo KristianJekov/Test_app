@@ -24,7 +24,7 @@ colors = {
 def check_board_ver(line, dict):
      if line.__contains__("sifly-main: BUILD_VERSION:"):     
         board_ver = line[51:69]
-        key = 'Board Version'
+        key = 'Board'
         dict[key] = board_ver
         print(f"{key}: {dict[key]}")
         
@@ -33,7 +33,7 @@ def check_sensor_hub_ver(line, dict):
     if line.__contains__("sensorhub: sensorhub_create - Device firmware version:"):
         sensor_ver_raw = line[-22:]
         sensor_ver = ansi_escape.sub('', sensor_ver_raw)
-        key = 'Sensor Hub Version'
+        key = 'Sensor Hub'
         dict[key] = sensor_ver
         print(f"{key}: {dict[key]}")
 
@@ -41,7 +41,7 @@ def check_batt_ver(line, dict):
     if line.__contains__("btdevmng: battery - firmware version:"):
         batt_ver_raw = line[-22:]
         batt_ver = ansi_escape.sub('', batt_ver_raw)
-        key = 'Battery Version'
+        key = 'Battery'
         dict[key] = batt_ver
         print(f"{key}: {dict[key]}")
 
@@ -50,7 +50,7 @@ def check_remote_ver(line, dict):
     if line.__contains__("btdevmng: remote - firmware version:"):
         remote_ver_raw = line[-22:]
         remote_ver = ansi_escape.sub('', remote_ver_raw)
-        key = 'Remote Version'
+        key = 'Remote'
         dict[key] = remote_ver
         print(f"{key}: {dict[key]}")
 
