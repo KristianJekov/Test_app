@@ -1,5 +1,6 @@
 import serial
 import time 
+from filter import *
 
 high = False
 low = True
@@ -23,8 +24,19 @@ ser.rts = high
 ser.dtr = ser.dtr
 
 line = ser.readline()
+versions_list = []
 
 
-while True:
+
+while check_if_all_ver_equal(versions_list):
     line = ser.readline().decode('utf-8').rstrip()
-    print(line)
+
+    check_board_ver(line, versions_list)
+    check_sensor_hub_ver(line, versions_list)
+    check_batt_ver(line, versions_list)
+    check_remote_ver(line, versions_list)
+
+    
+
+    
+    
