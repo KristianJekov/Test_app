@@ -67,7 +67,16 @@ def check_if_all_ver_equal(dict):
             return  print_colored("All devices have the same version", colors["green"])
         
         else:
+            # print_colored(unique_values, colors["yellow"])
             return print_colored("Not all devices have the same version", colors["red"])
         
     return True
                                                                      
+
+
+
+def check_all_components_vers(line, versions_dict):
+    check_board_ver(line, versions_dict)
+    check_sensor_hub_ver(line, versions_dict)
+    check_batt_ver(line, versions_dict)
+    check_remote_ver(line, versions_dict)

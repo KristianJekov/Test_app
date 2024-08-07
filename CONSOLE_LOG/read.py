@@ -24,17 +24,14 @@ ser.rts = high
 ser.dtr = ser.dtr
 
 line = ser.readline()
-versions_list = {}
+versions_dict = {}
 
 
 
-while check_if_all_ver_equal(versions_list):
+while check_if_all_ver_equal(versions_dict):
     line = ser.readline().decode('utf-8').rstrip()
 
-    check_board_ver(line, versions_list)
-    check_sensor_hub_ver(line, versions_list)
-    check_batt_ver(line, versions_list)
-    check_remote_ver(line, versions_list)
+    check_all_components_vers(line,versions_dict)
 
     
 
