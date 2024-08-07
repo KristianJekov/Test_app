@@ -24,7 +24,7 @@ ser.rts = high
 ser.dtr = ser.dtr
 
 line = ser.readline()
-versions_list = []
+versions_list = {}
 
 
 

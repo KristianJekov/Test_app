@@ -24,36 +24,45 @@ colors = {
 def check_board_ver(line, dict):
      if line.__contains__("sifly-main: BUILD_VERSION:"):     
         board_ver = line[51:69]
-        dict.append(board_ver)
-        print(f"Board Version: {board_ver}")
+        key = 'Board Version'
+        dict[key] = board_ver
+        print(f"{key}: {dict[key]}")
+        
 
 def check_sensor_hub_ver(line, dict):
     if line.__contains__("sensorhub: sensorhub_create - Device firmware version:"):
         sensor_ver_raw = line[-22:]
         sensor_ver = ansi_escape.sub('', sensor_ver_raw)
-        dict.append(sensor_ver)
-        print(f"Sensor Version: {sensor_ver}")
+        key = 'Sensor Hub Version'
+        dict[key] = sensor_ver
+        print(f"{key}: {dict[key]}")
 
 def check_batt_ver(line, dict):
     if line.__contains__("btdevmng: battery - firmware version:"):
         batt_ver_raw = line[-22:]
         batt_ver = ansi_escape.sub('', batt_ver_raw)
-        dict.append(batt_ver)
-        print(f"Battery Version: {batt_ver}")
+        key = 'Battery Version'
+        dict[key] = batt_ver
+        print(f"{key}: {dict[key]}")
 
 
 def check_remote_ver(line, dict):
     if line.__contains__("btdevmng: remote - firmware version:"):
         remote_ver_raw = line[-22:]
         remote_ver = ansi_escape.sub('', remote_ver_raw)
-        dict.append(remote_ver)
-        print(f"Remote Version: {remote_ver}")
+        key = 'Remote Version'
+        dict[key] = remote_ver
+        print(f"{key}: {dict[key]}")
 
 def check_if_all_ver_equal(dict):
-    if len(dict) == 4:
-        print(dict)
-        first_element = dict[0]
-        if all(element == first_element for element in dict):
+    if len(dict) == 4 or len(dict) == 3:
+        # print('\n'.join(f"{key}: {value}" for key, value in dict.items()))
+
+        values = dict.values()
+       
+        unique_values = set(values)
+       
+        if len(unique_values) == 1:
             return  print_colored("All devices have the same version", colors["green"])
         else:
          return print_colored("Not all devices have the same version", colors["red"])
