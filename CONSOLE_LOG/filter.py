@@ -1,8 +1,9 @@
 import re
 import sys
 import os
-
-# Add the parent directory of A and B to the Python path
+import time
+  
+  
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from SERVER_APP.config import config 
 
@@ -67,22 +68,23 @@ def print_ver_color(dict, key):
 
 
 def check_if_all_ver_equal(dict):
-    if len(dict) == 4 or len(dict) == 3:
+    if len(dict) == 4:
+        
+        if len(dict) < 4:            
+            print_colored("Not all devices are conected", colors["yellow"])
 
         values = dict.values()
        
         unique_values = set(values)
        
         if len(unique_values) == 1:
-            return  print_colored("All devices have the same version", colors["green"])
+            return  print_colored("All devices have the same version", colors["cyan"])
         
         else:
            
-            return print_colored("Not all devices have the same version", colors["red"])
+            return print_colored("Not all devices have the same version", colors["yellow"])
         
     return True                                                                     
-
-
 
 
 def check_all_components_vers(line, versions_dict):

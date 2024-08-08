@@ -30,7 +30,7 @@ versions_dict = {}
 
 while check_if_all_ver_equal(versions_dict):
     line = ser.readline().decode('utf-8').rstrip()
-
+    # print(line)
     check_all_components_vers(line,versions_dict)
 
     
