@@ -1,6 +1,6 @@
 import serial
 import time 
-from filter import *
+from filter import check_all_components_vers, check_if_all_ver_equal
 
 high = False
 low = True

@@ -1,5 +1,10 @@
 import re
+import sys
+import os
 
+# Add the parent directory of A and B to the Python path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from SERVER_APP.config import config 
 
 ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 
@@ -21,39 +26,44 @@ colors = {
 }
 
 
+
+def check_is_ver_correct(dict, key):
+    curr_ver = dict[key] 
+    wanted_ver = config.CURRENT_WANTED_VER
+
+    if  curr_ver[1:-10] == wanted_ver:
+        return True
+    return False
+    
 def check_board_ver(line, dict):
-     if line.__contains__("sifly-main: BUILD_VERSION:"):     
-        board_ver = line[51:69]
-        key = 'Board'
-        dict[key] = board_ver
-        print(f"{key}: {dict[key]}")
-        
+    check_component_ver(line, dict, "sifly-main: BUILD_VERSION:", "Board", 51, 69)
+
 
 def check_sensor_hub_ver(line, dict):
-    if line.__contains__("sensorhub: sensorhub_create - Device firmware version:"):
-        sensor_ver_raw = line[-22:]
-        sensor_ver = ansi_escape.sub('', sensor_ver_raw)
-        key = 'Sensor Hub'
-        dict[key] = sensor_ver
-        print(f"{key}: {dict[key]}")
+    check_component_ver(line, dict, "sensorhub: sensorhub_create - Device firmware version:", "Sensor Hub", -22)
 
 
 def check_batt_ver(line, dict):
-    if line.__contains__("btdevmng: battery - firmware version:"):
-        batt_ver_raw = line[-22:]
-        batt_ver = ansi_escape.sub('', batt_ver_raw)
-        key = 'Battery'
-        dict[key] = batt_ver
-        print(f"{key}: {dict[key]}")
+    check_component_ver(line, dict, "btdevmng: battery - firmware version:", "Battery", -22)
 
 
 def check_remote_ver(line, dict):
-    if line.__contains__("btdevmng: remote - firmware version:"):
-        remote_ver_raw = line[-22:]
-        remote_ver = ansi_escape.sub('', remote_ver_raw)
-        key = 'Remote'
-        dict[key] = remote_ver
-        print(f"{key}: {dict[key]}")
+    check_component_ver(line, dict, "btdevmng: remote - firmware version:", "Remote", -22)
+
+
+def check_component_ver(line, dict, keyword, key, slice, slice_to=None):
+    if line.__contains__(keyword):
+        ver_raw = line[slice:slice_to]
+        ver = ansi_escape.sub('', ver_raw)
+        dict[key] = ver
+        print_ver_color(dict, key)
+
+
+def print_ver_color(dict, key):
+            if check_is_ver_correct(dict, key):
+                print_colored(f"{key}: {dict[key]}", colors["green"]) 
+            else:
+                print_colored(f"{key}: {dict[key]}", colors["red"])
 
 
 def check_if_all_ver_equal(dict):
@@ -67,11 +77,11 @@ def check_if_all_ver_equal(dict):
             return  print_colored("All devices have the same version", colors["green"])
         
         else:
-            # print_colored(unique_values, colors["yellow"])
+           
             return print_colored("Not all devices have the same version", colors["red"])
         
-    return True
-                                                                     
+    return True                                                                     
+
 
 
 

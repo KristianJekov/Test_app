@@ -35,3 +35,4 @@ CURRENT_MODE = {
     'b': 'Business',
     'l': 'Lease'
 }
+CURRENT_WANTED_VER = "2.3-351"
