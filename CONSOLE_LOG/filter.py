@@ -10,6 +10,8 @@ from SERVER_APP.config import config
 ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 
 
+
+
 def print_colored(text, color_code):
     print(f"\033[{color_code}m{text}\033[0m")
 
@@ -67,28 +69,35 @@ def print_ver_color(dict, key):
                 print_colored(f"{key}: {dict[key]}", colors["red"])
 
 
-def check_if_all_ver_equal(dict):
-    if len(dict) == 4:
-        
-        if len(dict) < 4:            
-            print_colored("Not all devices are conected", colors["yellow"])
+def check_if_all_connected(line, dict):
+    
+    
+    if line.__contains__("eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 4 standby"):           
+            time.sleep(10)
+            print_colored("Please connect remote...", colors["yellow"])
 
-        values = dict.values()
+    # if len(dict) == 4:
+      
+    #     values = dict.values()
        
-        unique_values = set(values)
+    #     unique_values = set(values)
        
-        if len(unique_values) == 1:
-            return  print_colored("All devices have the same version", colors["cyan"])
-        
-        else:
-           
-            return print_colored("Not all devices have the same version", colors["yellow"])
-        
-    return True                                                                     
+    #     if len(unique_values) == 1:
+    #          print_colored("All devices have the same version", colors["cyan"])
+                     
+    #     else:
+    #          print_colored("Not all devices have the same version", colors["yellow"])
+         
+            
+                                                                    
 
+def check_all_components_vers(line, device_ver_dict):
 
-def check_all_components_vers(line, versions_dict):
-    check_board_ver(line, versions_dict)
-    check_sensor_hub_ver(line, versions_dict)
-    check_batt_ver(line, versions_dict)
-    check_remote_ver(line, versions_dict)
+    check_board_ver(line, device_ver_dict)
+    check_sensor_hub_ver(line, device_ver_dict)
+    check_batt_ver(line, device_ver_dict)
+    check_remote_ver(line, device_ver_dict)
+    check_if_all_connected(line, device_ver_dict)
+        
+        
+    

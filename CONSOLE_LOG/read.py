@@ -1,6 +1,6 @@
 import serial
 import time 
-from filter import check_all_components_vers, check_if_all_ver_equal
+from filter import check_all_components_vers, check_if_all_connected
 
 high = False
 low = True
@@ -24,14 +24,14 @@ ser.rts = high
 ser.dtr = ser.dtr
 
 line = ser.readline()
-versions_dict = {}
+device_ver_dict = {}
 
 
 
-while check_if_all_ver_equal(versions_dict):
+while True:
     line = ser.readline().decode('utf-8').rstrip()
     # print(line)
-    check_all_components_vers(line,versions_dict)
+    check_all_components_vers(line,device_ver_dict)
 
     
 
