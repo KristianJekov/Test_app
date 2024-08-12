@@ -14,11 +14,11 @@ def parse_progress(line):
         return current, total
     return None, None
 
-def print_loading_bar(iteration, total, length=50):
+def print_loading_bar(iteration, total, length=70):
     percent = f"{100 * (iteration / float(total)):.1f}"
     filled_length = int(length * iteration // total)
     bar = '█' * filled_length + '-' * (length - filled_length)
-    print(f'\r|{bar}| {percent}% Available', end='\r')
+    print(f'\r{bar} {percent}% Available', end='\r')
     if iteration == total:
         print()
         print_colored("Update available for download", colors["cyan"])
