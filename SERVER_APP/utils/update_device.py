@@ -7,8 +7,9 @@ def update_to_last_version():
     if config.FIRST_TEST == True:
         select_device()
         config.FIRST_TEST = False
-
+        
     edit_curr_device(driver)
+    config.UPDATED = True
     
 def update_specific_version(version):
     
@@ -17,4 +18,5 @@ def update_specific_version(version):
         config.FIRST_TEST = False
         
     edit_curr_device(driver, version)
+    config.UPDATED = True
         

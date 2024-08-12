@@ -1,6 +1,7 @@
 import serial
 import time 
-from filter import check_all_components_vers, check_if_all_connected
+from filter import check_all_components_vers
+from update_info import check_if_update_available
 
 high = False
 low = True
@@ -31,7 +32,8 @@ device_ver_dict = {}
 while True:
     line = ser.readline().decode('utf-8').rstrip()
     # print(line)
-    check_all_components_vers(line,device_ver_dict)
+    check_if_update_available(line)
+    # check_all_components_vers(line,device_ver_dict)
 
     
 

@@ -2,6 +2,10 @@ from utils.update_device import update_to_last_version, update_specific_version
 from utils.mode_select import registerate_device_in_mode
 from config import config
 
+def convert_version(version_str):
+    parts = version_str.rsplit('.', 1) 
+    return '-'.join(parts)
+
 def navigation_menu():
         answer = input("To update the device to the last version, type u\n" +
                     "To registerate the device in specific mode, type r\n")
@@ -15,6 +19,8 @@ def navigation_menu():
                 try:
                     version = input("Enter the version you want to update to:\n")
                     update_specific_version(str(version))
+                    config.CURRENT_WANTED_VER = convert_version(str(version))
+                    
                 except:
                     print("This Board doesnt support that version ")
                     return
