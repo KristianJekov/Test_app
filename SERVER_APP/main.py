@@ -4,6 +4,7 @@ from config import config
 
 
 def main():
+
     while True:
         if config.FIRST_TEST == True:
             navigation_menu()
