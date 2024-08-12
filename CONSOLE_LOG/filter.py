@@ -3,7 +3,8 @@ import sys
 import os
 import time
   
-  
+all_connected_message_printed = False
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from SERVER_APP.config import config 
 
@@ -49,10 +50,8 @@ def check_sensor_hub_ver(line, dict):
 def check_batt_ver(line, dict):
     check_component_ver(line, dict, "btdevmng: battery - firmware version:", "Battery", -22)
 
-
 def check_remote_ver(line, dict):
-    check_component_ver(line, dict, "btdevmng: remote - firmware version:", "Remote", -22)
-
+        check_component_ver(line, dict, "btdevmng: remote - firmware version:", "Remote", -22)
 
 def check_component_ver(line, dict, keyword, key, slice, slice_to=None):
     if line.__contains__(keyword):
@@ -68,28 +67,35 @@ def print_ver_color(dict, key):
             else:
                 print_colored(f"{key}: {dict[key]}", colors["red"])
 
+previous_state = None
 
-def check_if_all_connected(line, dict):
+def check_if_all_connected(device_ver_dict):
+    global previous_state
     
-    
-    if line.__contains__("eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 4 standby"):           
-            time.sleep(10)
-            print_colored("Please connect remote...", colors["yellow"])
 
-    # if len(dict) == 4:
-      
-    #     values = dict.values()
-       
-    #     unique_values = set(values)
-       
-    #     if len(unique_values) == 1:
-    #          print_colored("All devices have the same version", colors["cyan"])
-                     
-    #     else:
-    #          print_colored("Not all devices have the same version", colors["yellow"])
+    if len(device_ver_dict) < 4:
+        current_state = "Waiting for all components to connect"
+        if previous_state != current_state:
+            print_colored(current_state, colors["yellow"])
+            previous_state = current_state
+    else:
+        values = device_ver_dict.values()
+        unique_values = set(values)
+        if len(unique_values) == 1:
+            current_state = "All devices have the same version"
+            if previous_state != current_state:
+                print_colored(current_state, colors["cyan"])
+                previous_state = current_state
+        else:
+            current_state = "Not all devices have the same version"
+            if previous_state != current_state:
+                print_colored(current_state, colors["yellow"])
+                previous_state = current_state
+
+        
          
             
-                                                                    
+                                                                    # TODO fix the remote mesg as well as all other msgs 
 
 def check_all_components_vers(line, device_ver_dict):
 
@@ -97,7 +103,5 @@ def check_all_components_vers(line, device_ver_dict):
     check_sensor_hub_ver(line, device_ver_dict)
     check_batt_ver(line, device_ver_dict)
     check_remote_ver(line, device_ver_dict)
-    check_if_all_connected(line, device_ver_dict)
-        
-        
-    
+    check_if_all_connected(device_ver_dict)
+
