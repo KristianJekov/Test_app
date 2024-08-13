@@ -1,12 +1,4 @@
 import re
-import sys
-import os
-import time
-  
-all_connected_message_printed = False
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from SERVER_APP.config import config 
 
 ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 
@@ -33,7 +25,7 @@ colors = {
 
 def check_is_ver_correct(dict, key):
     curr_ver = dict[key] 
-    wanted_ver = config.CURRENT_WANTED_VER
+    wanted_ver = "2.3-377"
 
     if  curr_ver[1:-10] == wanted_ver:
         return True

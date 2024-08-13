@@ -1,6 +1,9 @@
 from utils.update_device import update_to_last_version, update_specific_version
 from utils.mode_select import registerate_device_in_mode
 from config import config
+import sys 
+sys.path.insert(0, "Console_Log")
+from Console_Log import read
 
 def convert_version(version_str):
     parts = version_str.rsplit('.', 1) 
@@ -20,6 +23,7 @@ def navigation_menu():
                     version = input("Enter the version you want to update to:\n")
                     update_specific_version(str(version))
                     config.CURRENT_WANTED_VER = convert_version(str(version))
+                    read.read_all()
                     
                 except:
                     print("This Board doesnt support that version ")
