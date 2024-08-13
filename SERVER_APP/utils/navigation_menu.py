@@ -18,6 +18,7 @@ def navigation_menu():
                         "To update to specific version, type s\n")
             if update == "l":
                 update_to_last_version()
+                read.read_all()
             elif update == "s":
                 try:
                     version = input("Enter the version you want to update to:\n")

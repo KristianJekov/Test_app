@@ -25,6 +25,7 @@ def print_loading_bar(iteration, total, length=100):
         print_colored("Update available for download", colors["cyan"])       
         counter += 1
         if counter == 2:
+            
             return True
     return False
 
@@ -38,5 +39,6 @@ def check_if_update_available(line):
     if line.__contains__("diagnostics-service: DIAGN_FirmwareDownload:"):
         process_line(line)
         if counter % 2 == 0 and counter > 0:
+            counter = 0
             return True
         return False
