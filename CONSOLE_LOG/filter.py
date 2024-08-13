@@ -84,10 +84,6 @@ def check_if_all_connected(device_ver_dict):
                 print_colored(current_state, colors["yellow"])
                 previous_state = current_state
 
-        
-         
-            
-                                                                    # TODO fix the remote mesg as well as all other msgs 
 
 def check_all_components_vers(line, device_ver_dict):
 

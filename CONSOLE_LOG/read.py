@@ -33,8 +33,9 @@ def read_all():
     while True:
         line = ser.readline().decode('utf-8').rstrip()
         # print(line)
-        check_if_update_available(line)
-    # check_all_components_vers(line,device_ver_dict)
+        if check_if_update_available(line):
+            break
+        #check_all_components_vers(line,device_ver_dict)
 
         
 

@@ -1,13 +1,11 @@
 import sys
-
 sys.path.insert(1,"Server_App")
 
 
-from Server_App import pages, utils, config, main
+from Server_App import  server_main
 
-
-def maina():
-   main.main() 
+def main():
+   server_main.s_main() 
     
 if __name__ == '__main__':
-    maina()
+    main()

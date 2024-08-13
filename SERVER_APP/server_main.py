@@ -3,7 +3,7 @@ from utils.select_device import driver
 from config import config
 
 
-def main():
+def s_main():
 
     while True:
         if config.FIRST_TEST == True:
@@ -21,4 +21,4 @@ def main():
             
 
 if __name__ == '__main__':
-    main()
+    s_main()
