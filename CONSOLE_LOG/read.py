@@ -35,7 +35,7 @@ def read_all():
         # print(line)
         if check_if_update_available(line):   
             break
-        # TODO fix the bug for the secont main loop and etc.
+        # TODO fix the bug for the secont main loop and etc
         #check_all_components_vers(line,device_ver_dict)
 
         
