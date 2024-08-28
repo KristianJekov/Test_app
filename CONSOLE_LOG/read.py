@@ -1,15 +1,14 @@
 import serial
-import time 
-from filter import check_all_components_vers
-from update_info import check_if_update_available
 
-def read_all():
+import time
+import queue as q
+
+def read_all(strg, qq: q.Queue):
     high = False
     low = True
-
+ 
     ser = serial.Serial(baudrate=921600)
-    ser.port = "COM17"
-
+    ser.port = strg
 
     ser.dtr = low
     ser.rts = high
@@ -23,22 +22,13 @@ def read_all():
     time.sleep(0.005)
 
     ser.rts = high
-    ser.dtr = ser.dtr
+    ser.dtr = ser.dtr 
+    ser.dtr = low
 
     line = ser.readline()
-    device_ver_dict = {}
-
-
 
     while True:
         line = ser.readline().decode('utf-8').rstrip()
-        # print(line)
-        if check_if_update_available(line):   
-            break
-        # TODO fix the bug for the secont main loop and etc
-        #check_all_components_vers(line,device_ver_dict)
+        qq.put(item=line, block=False)
 
-        
-
-    
-    
+ 

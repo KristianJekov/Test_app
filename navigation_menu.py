@@ -1,15 +1,18 @@
-from utils.update_device import update_to_last_version, update_specific_version
-from utils.mode_select import registerate_device_in_mode
-from config import config
+
+import queue as q
 import sys 
-sys.path.insert(0, "Console_Log")
-from Console_Log import read
+sys.path.insert(1, "Console_Log")
+sys.path.insert(1, "Server_App")   
+from Console_Log.update_info import check_if_update_available
+from Server_App.utils.update_device import update_to_last_version, update_specific_version
+from Server_App.utils.mode_select import registerate_device_in_mode
+from Server_App.config import config
 
-def convert_version(version_str):
-    parts = version_str.rsplit('.', 1) 
-    return '-'.join(parts)
+# def convert_version(version_str):
+#     parts = version_str.rsplit('.', 1) 
+#     return '-'.join(parts)
 
-def navigation_menu():
+def navigation_menu(qq: q.Queue):
         answer = input("To update the device to the last version, type u\n" +
                     "To registerate the device in specific mode, type r\n")
         if answer == "u":
@@ -18,13 +21,25 @@ def navigation_menu():
                         "To update to specific version, type s\n")
             if update == "l":
                 update_to_last_version()
-                read.read_all()
+                print("Connect to WiFi")
+
+                while True:
+                    line = qq.get(block=True)
+                    if check_if_update_available(line):
+                        break
+
+
             elif update == "s":
                 try:
                     version = input("Enter the version you want to update to:\n")
                     update_specific_version(str(version))
-                    config.CURRENT_WANTED_VER = convert_version(str(version))
-                    read.read_all()
+                    # config.CURRENT_WANTED_VER = convert_version(str(version))
+                    print("Connect to WiFi")
+                    while True:
+                        line = qq.get(block=True)
+                        
+                        if check_if_update_available(line):
+                            break
                     
                 except:
                     print("This Board doesnt support that version ")
