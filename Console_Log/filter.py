@@ -1,10 +1,5 @@
 import re
 
-ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
-
-
-
-
 def print_colored(text, color_code):
     print(f"\033[{color_code}m{text}\033[0m")
 
@@ -21,6 +16,7 @@ colors = {
     "reset": "0"
 }
 
+ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 
 
 def check_is_ver_correct(dict, key):

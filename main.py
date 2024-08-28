@@ -1,12 +1,17 @@
 import sys
 sys.path.insert(1,"Server_App")
 sys.path.insert(1,"Console_Log")
- 
+
+from selenium import webdriver
+from Server_App.config import config
+
+driver = webdriver.Firefox()
+driver.get(config.URL)
+
 import threading as th
 import queue as q
-from navigation_menu import navigation_menu
+from menu_tools import navigation_menu
 
-from Server_App.config import config
 from Console_Log import read
 
 # wifi-service: wifi_service_event_ip_handler - got ip
@@ -34,16 +39,16 @@ def menu(qq: q.Queue):
 
    while True:
         if config.FIRST_TEST == True:
-            navigation_menu(qq)
+            navigation_menu(qq, driver)
         else: 
             task_check = input("Do you want to continue? y/n\n")
         
             if task_check == "y":
-                navigation_menu(qq)
+                navigation_menu(qq, driver)
 
             else: 
                 print("Exiting the program")
-                config.URL.close()
+                driver.close()
                 break
 
 if __name__ == '__main__':

@@ -1,11 +1,11 @@
-from utils.select_device import select_device, driver
+from utils.select_device import select_device
 from utils.loading_funcs import wait_for_element, wait_for_massage_to_dissapear
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from config import config
 import time
     
-def registerate_device_in_mode(mode):
+def registerate_device_in_mode(mode, driver):
     
 
     if config.FIRST_TEST == True:
