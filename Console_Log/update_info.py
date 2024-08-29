@@ -1,6 +1,9 @@
 import re
 import time
-from filter import print_colored, colors
+import colorama
+from colorama import Fore, Back, Style
+
+colorama.init(autoreset=True)
 
 full_update_available = False
 counter = 0
@@ -22,7 +25,7 @@ def print_loading_bar(iteration, total, length=100):
     print(f'\r{bar} {percent}% Available', end='\r')
     if iteration == total:
         print()
-        print_colored("Update available for download", colors["cyan"])       
+        print(Fore.CYAN + "Update available for download")       
         counter += 1
         if counter == 2:
             
@@ -42,3 +45,8 @@ def check_if_update_available(line):
             counter = 0
             return True
         return False
+
+def update_board(line):
+     if line.__contains__("eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"):
+        print("Updating to selected version...")
+    

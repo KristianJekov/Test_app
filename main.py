@@ -1,4 +1,7 @@
 import sys
+# import subprocess
+# subprocess.run('start cmd /k python main.py', shell=True)
+
 sys.path.insert(1,"Server_App")
 sys.path.insert(1,"Console_Log")
 
@@ -28,9 +31,6 @@ def main():
    thr1.join()
    thr2.join()
 
-   print("Unrechable")
-   
-   menu(qq)
    
 def reading(qq: q.Queue):
    read.read_all("COM17", qq)
@@ -53,3 +53,4 @@ def menu(qq: q.Queue):
 
 if __name__ == '__main__':
     main()
+    

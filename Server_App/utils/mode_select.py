@@ -9,7 +9,7 @@ def registerate_device_in_mode(mode, driver):
     
 
     if config.FIRST_TEST == True:
-        select_device()
+        select_device(driver)
         config.FIRST_TEST = False
 
     if('Deregistered' not in driver.find_element(By.XPATH, config.STATE).text):

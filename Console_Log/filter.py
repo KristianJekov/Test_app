@@ -1,20 +1,9 @@
 import re
+import colorama
+from colorama import Fore, Back, Style
 
-def print_colored(text, color_code):
-    print(f"\033[{color_code}m{text}\033[0m")
+colorama.init(autoreset=True)
 
-
-colors = {
-    "black": "30",
-    "red": "31",
-    "green": "32",
-    "yellow": "33",
-    "blue": "34",
-    "magenta": "35",
-    "cyan": "36",
-    "white": "37",
-    "reset": "0"
-}
 
 ansi_escape = re.compile(r'\x1b\[[0-9;]*m')
 
@@ -51,11 +40,11 @@ def check_component_ver(line, dict, keyword, key, slice, slice_to=None):
 
 def print_ver_color(dict, key):
             if check_is_ver_correct(dict, key):
-                print_colored(f"{key}: {dict[key]}", colors["green"]) 
+                print(Fore.GREEN + f"{key}: {dict[key]}") 
             else:
-                print_colored(f"{key}: {dict[key]}", colors["red"])
+                print(Fore.RED + f"{key}: {dict[key]}")
 
-previous_state = None
+previous_state = None    
 
 def check_if_all_connected(device_ver_dict):
     global previous_state
@@ -64,7 +53,7 @@ def check_if_all_connected(device_ver_dict):
     if len(device_ver_dict) < 4:
         current_state = "Waiting for all components to connect"
         if previous_state != current_state:
-            print_colored(current_state, colors["yellow"])
+            print(Fore.YELLOW + current_state)
             previous_state = current_state
     else:
         values = device_ver_dict.values()
@@ -72,12 +61,12 @@ def check_if_all_connected(device_ver_dict):
         if len(unique_values) == 1:
             current_state = "All devices have the same version"
             if previous_state != current_state:
-                print_colored(current_state, colors["cyan"])
+                print(Fore.CYAN + current_state)
                 previous_state = current_state
         else:
             current_state = "Not all devices have the same version"
             if previous_state != current_state:
-                print_colored(current_state, colors["yellow"])
+                print(Fore.YELLOW + current_state)
                 previous_state = current_state
 
 

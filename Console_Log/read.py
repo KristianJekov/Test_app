@@ -28,7 +28,10 @@ def read_all(strg, qq: q.Queue):
     line = ser.readline()
 
     while True:
-        line = ser.readline().decode('utf-8').rstrip()
-        qq.put(item=line, block=False)
-
+        line = ser.readline().decode('utf-8', errors='ignore').rstrip()
+       
+        try:
+             qq.put(item=line, block=False)
+        except q.Full:
+            pass
  
