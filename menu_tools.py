@@ -31,6 +31,11 @@ def navigation_menu(qq: q.Queue, driver):
                     line = qq.get(block=True)
                     if check_if_update_available(line):
                         break
+
+                while True:
+                        line = qq.get(block=True)
+                        update_board(line)
+                             
                 
 
             elif update == "s":
@@ -43,7 +48,12 @@ def navigation_menu(qq: q.Queue, driver):
                     while True:
                         line = qq.get(block=True)
                         if check_if_update_available(line):
-                            break     
+                            break 
+
+                    while True:
+                        line = qq.get(block=True)
+                        update_board(line)
+                             
                 except:
                     print("This Board doesnt support that version ")
                     return

@@ -1,7 +1,7 @@
 import re
-import time
+import tqdm
 import colorama
-from colorama import Fore, Back, Style
+from colorama import Fore
 
 colorama.init(autoreset=True)
 
@@ -9,7 +9,6 @@ full_update_available = False
 counter = 0
 
 def parse_progress(line):
-    # Regex to extract the numbers within the square brackets
     match = re.search(r'\[(\d+)\s*/\s*(\d+)\]', line)
     if match:
         current = int(match.group(1))
@@ -47,6 +46,31 @@ def check_if_update_available(line):
         return False
 
 def update_board(line):
+    #  print(line)
      if line.__contains__("eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"):
         print("Updating to selected version...")
-    
+     loading_bar(4, line)
+        
+
+def loading_bar(components, line, msg = "Dowloading"):
+    base_progress = 0
+
+    with tqdm(total=components*100, desc=msg) as pbar:
+        last_progress = 0  
+
+        pattern = re.compile(r'progress (\d+)%')
+
+
+        for l in line:
+            match = pattern.search(line)
+            if match:
+                progress = int(match.group(1))
+
+                cumulative_progress = progress + base_progress
+
+                increment = cumulative_progress - last_progress
+                pbar.update(increment)
+                last_progress = cumulative_progress
+
+                if progress == 100:
+                    base_progress += 100
