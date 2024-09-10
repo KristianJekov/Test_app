@@ -1,5 +1,5 @@
 import re
-import tqdm
+from tqdm import tqdm
 import colorama
 from colorama import Fore
 
@@ -60,17 +60,17 @@ def loading_bar(components, line, msg = "Dowloading"):
 
         pattern = re.compile(r'progress (\d+)%')
 
+        match = pattern.search(line)
+        if match:
+            progress = int(match.group(1))
 
-        for l in line:
-            match = pattern.search(line)
-            if match:
-                progress = int(match.group(1))
+            cumulative_progress = progress + base_progress
 
-                cumulative_progress = progress + base_progress
+            increment = cumulative_progress - last_progress
+            pbar.update(increment)
+            last_progress = cumulative_progress
 
-                increment = cumulative_progress - last_progress
-                pbar.update(increment)
-                last_progress = cumulative_progress
+            if progress == 100:
+                base_progress += 100
 
-                if progress == 100:
-                    base_progress += 100
+    return True

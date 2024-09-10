@@ -6,7 +6,7 @@ from colorama import Fore
 
 sys.path.insert(1, "Console_Log")
 sys.path.insert(1, "Server_App")   
-from Console_Log.update_info import check_if_update_available, update_board
+from Console_Log.update_info import check_if_update_available, update_board, loading_bar
 from Server_App.utils.update_device import update_to_last_version, update_specific_version
 from Server_App.utils.mode_select import registerate_device_in_mode
 from Server_App.config import config
@@ -33,8 +33,9 @@ def navigation_menu(qq: q.Queue, driver):
                         break
 
                 while True:
-                        line = qq.get(block=True)
-                        update_board(line)
+                    line = qq.get(block=True)
+                    if loading_bar(4, line):
+                        break
                              
                 
 
@@ -52,7 +53,8 @@ def navigation_menu(qq: q.Queue, driver):
 
                     while True:
                         line = qq.get(block=True)
-                        update_board(line)
+                        if loading_bar(4, line):
+                            break
                              
                 except:
                     print("This Board doesnt support that version ")
