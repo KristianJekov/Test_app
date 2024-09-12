@@ -73,4 +73,7 @@ def loading_bar(components, line, msg = "Dowloading"):
             if progress == 100:
                 base_progress += 100
 
-    return True
+    if last_progress == components*100: 
+        return True
+    return False
+    

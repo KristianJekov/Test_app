@@ -14,17 +14,21 @@ from Server_App.config import config
 # def convert_version(version_str):
 #     parts = version_str.rsplit('.', 1) 
 #     return '-'.join(parts)
+
 colorama.init(autoreset=True)
 
 def navigation_menu(qq: q.Queue, driver):
         answer = input("To update the device to the last version, type u\n" +
                     "To registerate the device in specific mode, type r\n")
+        
         if answer == "u":
             print(Fore.LIGHTMAGENTA_EX + "-----UPDATER------")
             update = input("To update to the last version, type l\n" +
                         "To update to specific version, type s\n")
+            
             if update == "l":
                 update_to_last_version(driver)
+
                 print(Fore.CYAN + "Connect to WiFi")
 
                 while True:
@@ -46,6 +50,7 @@ def navigation_menu(qq: q.Queue, driver):
                     # config.CURRENT_WANTED_VER = convert_version(str(version))
 
                     print(Fore.CYAN + "Connect to WiFi")
+
                     while True:
                         line = qq.get(block=True)
                         if check_if_update_available(line):
