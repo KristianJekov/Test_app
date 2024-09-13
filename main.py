@@ -33,7 +33,7 @@ def main():
 
    
 def reading(qq: q.Queue):
-   read.read_all("COM17", qq)
+    read.read_all("COM17", qq)
 
 def menu(qq: q.Queue):
 

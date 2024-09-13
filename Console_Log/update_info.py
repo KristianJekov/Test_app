@@ -7,6 +7,8 @@ colorama.init(autoreset=True)
 
 full_update_available = False
 counter = 0
+base_progress = 0
+last_progress = 0  
 
 def parse_progress(line):
     match = re.search(r'\[(\d+)\s*/\s*(\d+)\]', line)
@@ -45,35 +47,33 @@ def check_if_update_available(line):
             return True
         return False
 
-def update_board(line):
-    #  print(line)
+def update_board(pbar: tqdm, line):
      if line.__contains__("eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"):
         print("Updating to selected version...")
-     loading_bar(4, line)
+     if line.__contains__("- progress "):
+        loading_bar(pbar, line)
         
 
-def loading_bar(components, line, msg = "Dowloading"):
-    base_progress = 0
+def loading_bar(pbar: tqdm, line):
+    global base_progress
+    global last_progress  
+    pattern = re.compile(r'progress (\d+)%')
 
-    with tqdm(total=components*100, desc=msg) as pbar:
-        last_progress = 0  
+    match = pattern.search(line)
+    
+    if match:
+        progress = int(match.group(1))
 
-        pattern = re.compile(r'progress (\d+)%')
+        cumulative_progress = progress + base_progress
 
-        match = pattern.search(line)
-        if match:
-            progress = int(match.group(1))
+        increment = cumulative_progress - last_progress
+        pbar.update(increment)
+        last_progress = cumulative_progress
 
-            cumulative_progress = progress + base_progress
+        if progress == 100:
+            base_progress += 100
 
-            increment = cumulative_progress - last_progress
-            pbar.update(increment)
-            last_progress = cumulative_progress
-
-            if progress == 100:
-                base_progress += 100
-
-    if last_progress == components*100: 
+    if last_progress >= 400: 
         return True
     return False
     

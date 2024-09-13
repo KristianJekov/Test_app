@@ -3,6 +3,7 @@ import queue as q
 import sys 
 import colorama
 from colorama import Fore
+from tqdm import tqdm
 
 sys.path.insert(1, "Console_Log")
 sys.path.insert(1, "Server_App")   
@@ -36,12 +37,12 @@ def navigation_menu(qq: q.Queue, driver):
                     if check_if_update_available(line):
                         break
 
+                bar = tqdm(total=400, desc="Dowloading",  bar_format="{l_bar}{bar} {percentage:3.0f}%| {n_fmt}/{total_fmt}")
                 while True:
                     line = qq.get(block=True)
-                    if loading_bar(4, line):
+                    if update_board(bar, line):
                         break
-                             
-                
+                    
 
             elif update == "s":
                 try:
@@ -56,10 +57,12 @@ def navigation_menu(qq: q.Queue, driver):
                         if check_if_update_available(line):
                             break 
 
+                    bar = tqdm(total=400, desc="Dowloading",  bar_format="{l_bar}{bar} {percentage:3.0f}%| {n_fmt}/{total_fmt}")
                     while True:
                         line = qq.get(block=True)
-                        if loading_bar(4, line):
+                        if update_board(bar, line):
                             break
+                    
                              
                 except:
                     print("This Board doesnt support that version ")

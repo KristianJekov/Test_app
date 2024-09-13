@@ -4,9 +4,10 @@ import time
 import queue as q
 
 def read_all(strg, qq: q.Queue):
+        
     high = False
     low = True
- 
+
     ser = serial.Serial(baudrate=921600)
     ser.port = strg
 
@@ -29,9 +30,8 @@ def read_all(strg, qq: q.Queue):
 
     while True:
         line = ser.readline().decode('utf-8', errors='ignore').rstrip()
-       
         try:
-             qq.put(item=line, block=False)
+            qq.put(item=line, block=False)
         except q.Full:
             pass
- 
+
