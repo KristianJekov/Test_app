@@ -7,50 +7,58 @@ sys.path.insert(1,"Console_Log")
 
 from selenium import webdriver
 from Server_App.config import config
+from colorama import init as colorama_init, Fore
 
 driver = webdriver.Firefox()
 driver.get(config.URL)
 
-import threading as th
-import queue as q
+import threading as threading
+import queue as queue
 from menu_tools import navigation_menu
+from Console_Log.update_info import FirmwareUpdater
+from Console_Log.read import read_all
 
-from Console_Log import read
-
-# wifi-service: wifi_service_event_ip_handler - got ip
-# wifi-service: wifi_service_event_wifi_handler - sta disconnected
+shutdown_flag = threading.Event()
 
 def main():
-   qq = q.Queue(maxsize=1024)
-   thr1 = th.Thread(target=reading, args=(qq,))
-   thr2 = th.Thread(target=menu, args=(qq,))
+    
+    q = queue.Queue(maxsize=1024)
+    firmware_updater = FirmwareUpdater()
 
-   thr1.start()
-   thr2.start()
+    read_thread = threading.Thread(target=read_all, args=("COM17", q, shutdown_flag))
+    menu_thread = threading.Thread(target=menu_loop, args=(q, driver, firmware_updater))
 
-   thr1.join()
-   thr2.join()
+    read_thread.start()
+    menu_thread.start()
 
-   
-def reading(qq: q.Queue):
-    read.read_all("COM17", qq)
+    try:
+        read_thread.join()
+        menu_thread.join()
+    except KeyboardInterrupt:
+        print("\nShutting down gracefully...")
+        shutdown_flag.set()
+        read_thread.join(timeout=2)
+        menu_thread.join(timeout=2)
+    finally:
+        driver.quit()
 
-def menu(qq: q.Queue):
+def menu_loop(q: queue.Queue, driver: webdriver.Firefox, firmware_updater: FirmwareUpdater):
+    while not shutdown_flag.is_set():
+        navigation_menu(q, driver, firmware_updater, shutdown_flag)
+        if not continue_prompt():
+            print("Exiting the program")
+            shutdown_flag.set()
+            break
 
-   while True:
-        if config.FIRST_TEST == True:
-            navigation_menu(qq, driver)
-        else: 
-            task_check = input("Do you want to continue? y/n\n")
-        
-            if task_check == "y":
-                navigation_menu(qq, driver)
-
-            else: 
-                print("Exiting the program")
-                driver.close()
-                break
+def continue_prompt():
+    while True:
+        answer = input(Fore.YELLOW + "Do you want to continue? (y/n): ").lower()
+        if answer == 'y':
+            return True
+        elif answer == 'n':
+            return False
+        else:
+            print("Invalid input. Please enter 'y' or 'n'.")
 
 if __name__ == '__main__':
     main()
-    
