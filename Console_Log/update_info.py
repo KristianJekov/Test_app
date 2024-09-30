@@ -11,6 +11,8 @@ RESET = "\033[0m"
 
 DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
 UPDATE_USECASE_PATTERN = "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
+COMPONENTS_PATTERN = "eFoil-remote-receiver: remote_receiver_updater_callback -"
+BATTERY_PATTERN = "btdevmng: btdevmng_updater_callback -"
 
 class FirmwareUpdater:
     def __init__(self):
@@ -114,7 +116,7 @@ class FirmwareUpdater:
                 if counter >= 4:
                     return
                 else:
-                    if "eFoil-remote-receiver: remote_receiver_updater_callback -" in line or "btdevmng: btdevmng_updater_callback -" in line:
+                    if COMPONENTS_PATTERN in line or BATTERY_PATTERN in line:
                         print(line)
 
                     if "done" in line:
