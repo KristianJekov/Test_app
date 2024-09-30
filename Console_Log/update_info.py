@@ -19,18 +19,21 @@ class FirmwareUpdater:
         self.last_progress = 0
         self.progress_pattern = re.compile(r'\[(\d+)\s*/\s*(\d+)\]')
         self.ota_pattern = re.compile(r'progress (\d+)%')
-        self.progress_started = False  # Track when the progress has started
+        self.progress_started = False
+        self.bar = None  # Initialize without tqdm bar
 
     def create_progress_bar(self) -> tqdm:
         """Create a tqdm progress bar."""
-        return tqdm(
-            total=400,
-            desc="Downloading",
-            bar_format=f"{{l_bar}}{GREEN}{{bar}}{RESET} {{percentage:3.0f}}%| {{n_fmt}}/{{total_fmt}}",
-            dynamic_ncols=True,
-            leave=False,
-            initial=0
-        )
+        if not self.bar:
+            self.bar = tqdm(
+                total=400,
+                desc="Downloading",
+                bar_format=f"{{l_bar}}{GREEN}{{bar}}{RESET} {{percentage:3.0f}}%| {{n_fmt}}/{{total_fmt}}",
+                dynamic_ncols=True,
+                leave=False,
+                initial=0
+            )
+        return self.bar
 
     def parse_progress(self, line: str) -> Tuple[Optional[int], Optional[int]]:
         """Extract current and total progress from a log line."""
@@ -64,7 +67,7 @@ class FirmwareUpdater:
                     return True
         return False
 
-    def update_board(self, bar: tqdm, line: str) -> bool:
+    def update_board(self, line: str) -> bool:
         """Process OTA updates and update the tqdm progress bar."""
         if UPDATE_USECASE_PATTERN in line:
             print("Updating to selected version...")
@@ -75,19 +78,19 @@ class FirmwareUpdater:
             cumulative_progress = progress + self.base_progress
             increment = cumulative_progress - self.last_progress
 
-            # Enable the progress bar once the first update happens
             if not self.progress_started:
                 print("Progress started...")
                 self.progress_started = True
+                self.create_progress_bar()  # Create bar only when progress starts
 
-            bar.update(increment)
+            self.bar.update(increment)
             self.last_progress = cumulative_progress
 
             if progress == 100:
                 self.base_progress += 100
 
             if self.last_progress >= 400:
-                bar.close()
+                self.bar.close()
                 print(Fore.GREEN + "\nUpdate completed successfully!")
                 return True
 
@@ -95,15 +98,13 @@ class FirmwareUpdater:
 
     def run_update_process(self, qq: queue.Queue, shutdown_flag: Any):
         """Handle the full update process using the tqdm progress bar."""
-        with self.create_progress_bar() as bar:
-            while not shutdown_flag.is_set():
-                try:
-                    line = qq.get(timeout=1)
-                    if self.update_board(bar, line):
-                        return  # Exit once the update completes
-                except queue.Empty:
-                    continue  # If the queue is empty, continue the loop
-
+        while not shutdown_flag.is_set():
+            try:
+                line = qq.get(timeout=1)
+                if self.update_board(line):
+                    return  # Exit once the update completes
+            except queue.Empty:
+                continue  # If the queue is empty, continue the loop
 
     def show_detiled_update_info(self, qq: queue.Queue, shutdown_flag: Any):
         counter = 0
