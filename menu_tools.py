@@ -3,9 +3,14 @@ from colorama import Fore
 from tqdm import tqdm
 import queue
 import threading
+from Console_Log.update_info import FirmwareUpdater  # Importing the FirmwareUpdater class
+
+GREEN = "\033[92m"
+RESET = "\033[0m"
 
 sys.path.extend(["Console_Log", "Server_App"])
 
+# from Console_Log.filter import check_all_components_versions, all_versions_dict
 from Server_App.utils.update_device import update_to_last_version, update_specific_version
 from Server_App.utils.mode_select import registerate_device_in_mode
 from Server_App.config import config
@@ -43,7 +48,7 @@ def update_menu(qq: queue.Queue, driver, firmware_updater, shutdown_flag: thread
         except Exception as e:
             print(f"Error: {e}")
             return
-
+        
     print(Fore.CYAN + "Connect to WiFi")
     wait_for_update(qq, firmware_updater, shutdown_flag)
 
@@ -60,6 +65,7 @@ def register_menu(driver):
         print("Invalid mode selected.")
 
 def wait_for_update(qq: queue.Queue, firmware_updater, shutdown_flag: threading.Event):
+    """Wait for updates and show a progress bar."""
     while not shutdown_flag.is_set():
         try:
             line = qq.get(timeout=1)  # Wait for 1 second before checking the shutdown flag
@@ -67,14 +73,12 @@ def wait_for_update(qq: queue.Queue, firmware_updater, shutdown_flag: threading.
                 break
         except queue.Empty:
             continue  # If the queue is empty, continue the loop
-
-    bar = tqdm(total=400, desc="Downloading", bar_format="{l_bar}{bar} {percentage:3.0f}%| {n_fmt}/{total_fmt}")
-    while not shutdown_flag.is_set():
-        try:
-            line = qq.get(timeout=1)
-            if firmware_updater.update_board(bar, line):
-                return  # Return to main menu after update is complete
-        except queue.Empty:
-            continue  # If the queue is empty, continue the loop
     
-    bar.close()
+    show_info = input("d: Show detailed update info\n").lower()
+    
+    if show_info == "d":
+        print("Displaying detailed update info...")
+        firmware_updater.show_detiled_update_info(qq, shutdown_flag)
+        
+    else:
+        firmware_updater.run_update_process(qq, shutdown_flag)

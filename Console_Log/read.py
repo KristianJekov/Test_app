@@ -4,7 +4,7 @@ import queue
 import threading
 
 def read_all(port: str, qq: queue.Queue, shutdown_flag: threading.Event):
-    high, low = True, False
+    high, low = False, True
 
     try:
         with serial.Serial(port=port, baudrate=921600, timeout=1) as ser:
@@ -38,6 +38,7 @@ def read_all(port: str, qq: queue.Queue, shutdown_flag: threading.Event):
                 except serial.SerialException as e:
                     print(f"Serial port error: {e}")
                     break
+                
                 except UnicodeDecodeError as e:
                     print(f"Decoding error: {e}")
                     continue
