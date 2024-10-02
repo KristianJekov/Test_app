@@ -119,7 +119,7 @@ class FirmwareUpdater:
                     if COMPONENTS_PATTERN in line or BATTERY_PATTERN in line:
                         print(line)
 
-                    if "done" in line:
+                    if "updater_callback - done" in line:
                         counter += 1   
 
             except queue.Empty:
