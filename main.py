@@ -16,7 +16,7 @@ import threading as threading
 import queue as queue
 from menu_tools import navigation_menu
 from Console_Log.update_info import FirmwareUpdater
-from Console_Log.read import read_all
+from Console_Log.read import read_from_board
 
 shutdown_flag = threading.Event()
 
@@ -25,7 +25,7 @@ def main():
     q = queue.Queue(maxsize=1024)
     firmware_updater = FirmwareUpdater()
 
-    read_thread = threading.Thread(target=read_all, args=("COM17", q, shutdown_flag))
+    read_thread = threading.Thread(target=read_from_board, args=("COM17", q, shutdown_flag))
     menu_thread = threading.Thread(target=menu_loop, args=(q, driver, firmware_updater))
 
     read_thread.start()

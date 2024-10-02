@@ -3,45 +3,54 @@ import time
 import queue
 import threading
 
-def read_all(port: str, qq: queue.Queue, shutdown_flag: threading.Event):
-    high, low = False, True
-
-    try:
-        with serial.Serial(port=port, baudrate=921600, timeout=1) as ser:
-            # Initialize serial port
-            ser.dtr = low
-            ser.rts = high
-            ser.dtr = ser.dtr
-            
-            ser.dtr = high
-            ser.rts = low
-            ser.dtr = ser.dtr
+def read_from_board(port: str, log_queue: queue.Queue, shutdown_event: threading.Event, retry_delay: float = 5.0):
+    
+    def initialize_serial_connection():
+        try:
+            ser = serial.Serial(port=port, baudrate=921600, timeout=1)
+            ser.dtr = False
+            ser.rts = True
+            ser.dtr = True
 
             time.sleep(0.005)
 
-            ser.rts = high
-            ser.dtr = ser.dtr 
-            ser.dtr = low
+            ser.dtr = False
+            ser.rts = False
 
-            # Discard first line
             ser.readline()
+            return ser
+        except serial.SerialException as e:
+            print(f"\nSerial initialization failed on {port}: {e}")
+            return None
 
-            while not shutdown_flag.is_set():
-                try:
-                    line = ser.readline().decode('utf-8', errors='ignore').rstrip()
-                    if line:
-                        try:
-                            qq.put(line, block=False)
-                        except queue.Full:
-                            # Optionally, log or handle full queue
-                            pass
-                except serial.SerialException as e:
-                    print(f"Serial port error: {e}")
-                    break
+    while not shutdown_event.is_set():
+        ser = initialize_serial_connection()
+        
+        if ser:
+            try:
+                print(f"\nConnected to {port} and reading logs...")
                 
-                except UnicodeDecodeError as e:
-                    print(f"Decoding error: {e}")
-                    continue
+                while not shutdown_event.is_set():
+                    try:
+                        line = ser.readline().decode('utf-8', errors='ignore').rstrip()
+                        if line:
+                            try:
+                                log_queue.put(line, block=False)
+                                
+                            except queue.Full:
+                                pass
 
-    except serial.SerialException as e:
-        print(f"Failed to open serial port {port}: {e}")
+                    except (serial.SerialException, UnicodeDecodeError) as e:
+                        print(f"\nError during reading or decoding: {e}")
+                        break 
+                
+            finally:
+                ser.close() 
+                print(f"\nDisconnected from {port}.")
+        
+
+        if not shutdown_event.is_set():
+            print(f"\nRetrying connection in {retry_delay} seconds...")
+            time.sleep(retry_delay)
+    
+    print("\nShutdown signal received. Exiting read loop.")

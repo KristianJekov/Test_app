@@ -113,7 +113,7 @@ class FirmwareUpdater:
         while not shutdown_flag.is_set():
             try:
                 line = qq.get(timeout=1)
-                if counter >= 4:
+                if counter >= 5:
                     return
                 else:
                     if COMPONENTS_PATTERN in line or BATTERY_PATTERN in line:
