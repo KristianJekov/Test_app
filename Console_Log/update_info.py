@@ -19,6 +19,7 @@ class FirmwareUpdater:
         self.update_counter = 0
         self.base_progress = 0
         self.last_progress = 0
+        self.current_progress = 0  # Track the current component's progress
         self.progress_pattern = re.compile(r'\[(\d+)\s*/\s*(\d+)\]')
         self.ota_pattern = re.compile(r'progress (\d+)%')
         self.progress_started = False
@@ -28,7 +29,7 @@ class FirmwareUpdater:
         """Create a tqdm progress bar."""
         if not self.bar:
             self.bar = tqdm(
-                total=400,
+                total=500,
                 desc="Downloading",
                 bar_format=f"{{l_bar}}{GREEN}{{bar}}{RESET} {{percentage:3.0f}}%| {{n_fmt}}/{{total_fmt}}",
                 dynamic_ncols=True,
@@ -76,25 +77,43 @@ class FirmwareUpdater:
 
         match = self.ota_pattern.search(line)
         if match:
-            progress = int(match.group(1))
+            progress = int(match.group(1))  # Extract progress percentage
             cumulative_progress = progress + self.base_progress
             increment = cumulative_progress - self.last_progress
 
+            # Start the progress bar if it hasn't started yet
             if not self.progress_started:
                 print("Progress started...")
                 self.progress_started = True
                 self.create_progress_bar()  # Create bar only when progress starts
 
-            self.bar.update(increment)
-            self.last_progress = cumulative_progress
+            # Update the bar if there's a positive increment
+            if increment > 0:
+                self.bar.update(increment)
+                self.last_progress = cumulative_progress
+                self.current_progress = progress
 
-            if progress == 100:
-                self.base_progress += 100
+        # Check if the current component update is done
+        if "updater_callback - done" in line:
+            if self.current_progress < 100:  # If current progress is less than 100, complete it
+                increment = (100 + self.base_progress) - self.last_progress
+                if increment > 0:
+                    self.bar.update(increment)  # Complete the current component's progress
+                    self.last_progress += increment
 
-            if self.last_progress >= 400:
-                self.bar.close()
-                print(Fore.GREEN + "\nUpdate completed successfully!")
-                return True
+            # Increment the base progress by 100% for the completed component
+            self.base_progress += 100
+            self.current_progress = 0  # Reset current progress for the next component
+
+        # If total progress reaches or exceeds 500%, close the bar and signal completion
+        if self.last_progress >= 500:
+            self.base_progress = 0
+            self.last_progress = 0
+            self.current_progress = 0
+            self.bar.close()
+            self.bar.update(0)
+            print(Fore.GREEN + "\nUpdate completed successfully!")
+            return True
 
         return False
 
@@ -114,6 +133,7 @@ class FirmwareUpdater:
             try:
                 line = qq.get(timeout=1)
                 if counter >= 5:
+                    counter = 0
                     return
                 else:
                     if COMPONENTS_PATTERN in line or BATTERY_PATTERN in line:
