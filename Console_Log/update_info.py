@@ -11,8 +11,6 @@ RESET = "\033[0m"
 
 DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
 UPDATE_USECASE_PATTERN = "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
-COMPONENTS_PATTERN = "eFoil-remote-receiver: remote_receiver_updater_callback -"
-BATTERY_PATTERN = "btdevmng: btdevmng_updater_callback -"
 
 class FirmwareUpdater:
     def __init__(self):
@@ -71,51 +69,51 @@ class FirmwareUpdater:
         return False
 
     def update_board(self, line: str) -> bool:
-        """Process OTA updates and update the tqdm progress bar."""
         if UPDATE_USECASE_PATTERN in line:
             print("Updating to selected version...")
 
         match = self.ota_pattern.search(line)
         if match:
-            progress = int(match.group(1))  # Extract progress percentage
-            cumulative_progress = progress + self.base_progress
+
+            progress = int(match.group(1))
+
+            cumulative_progress = self.base_progress + progress
+
             increment = cumulative_progress - self.last_progress
 
-            # Start the progress bar if it hasn't started yet
             if not self.progress_started:
                 print("Progress started...")
                 self.progress_started = True
-                self.create_progress_bar()  # Create bar only when progress starts
+                self.create_progress_bar()  # Create the bar when the progress starts
 
-            # Update the bar if there's a positive increment
             if increment > 0:
                 self.bar.update(increment)
-                self.last_progress = cumulative_progress
+                self.last_progress = cumulative_progress  # Update last_progress to cumulative value
                 self.current_progress = progress
 
-        # Check if the current component update is done
         if "updater_callback - done" in line:
-            if self.current_progress < 100:  # If current progress is less than 100, complete it
+            if self.current_progress < 100:
                 increment = (100 + self.base_progress) - self.last_progress
                 if increment > 0:
                     self.bar.update(increment)  # Complete the current component's progress
                     self.last_progress += increment
 
-            # Increment the base progress by 100% for the completed component
             self.base_progress += 100
             self.current_progress = 0  # Reset current progress for the next component
 
-        # If total progress reaches or exceeds 500%, close the bar and signal completion
         if self.last_progress >= 500:
             self.base_progress = 0
             self.last_progress = 0
             self.current_progress = 0
-            self.bar.close()
-            self.bar.update(0)
+            self.progress_started = False  # Reset progress flag
+            if self.bar:
+                self.bar.close()
+                self.bar = None  # Reset tqdm bar
             print(Fore.GREEN + "\nUpdate completed successfully!")
             return True
 
         return False
+
 
     def run_update_process(self, qq: queue.Queue, shutdown_flag: Any):
         """Handle the full update process using the tqdm progress bar."""
@@ -136,7 +134,7 @@ class FirmwareUpdater:
                     counter = 0
                     return
                 else:
-                    if COMPONENTS_PATTERN in line or BATTERY_PATTERN in line:
+                    if "updater_callback -" in line:
                         print(line)
 
                     if "updater_callback - done" in line:
