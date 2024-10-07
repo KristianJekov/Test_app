@@ -1,8 +1,10 @@
-import re
-from tqdm import tqdm
-from colorama import Fore, init as colorama_init
-from typing import Optional, Tuple, Any
 import queue
+import re
+from typing import Any, Optional, Tuple
+
+from colorama import Fore
+from colorama import init as colorama_init
+from tqdm import tqdm
 
 colorama_init(autoreset=True)
 
@@ -10,7 +12,10 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 
 DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
-UPDATE_USECASE_PATTERN = "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
+UPDATE_USECASE_PATTERN = (
+    "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
+)
+
 
 class FirmwareUpdater:
     def __init__(self):
@@ -18,8 +23,8 @@ class FirmwareUpdater:
         self.base_progress = 0
         self.last_progress = 0
         self.current_progress = 0  # Track the current component's progress
-        self.progress_pattern = re.compile(r'\[(\d+)\s*/\s*(\d+)\]')
-        self.ota_pattern = re.compile(r'progress (\d+)%')
+        self.progress_pattern = re.compile(r"\[(\d+)\s*/\s*(\d+)\]")
+        self.ota_pattern = re.compile(r"progress (\d+)%")
         self.progress_started = False
         self.bar = None  # Initialize without tqdm bar
 
@@ -32,7 +37,7 @@ class FirmwareUpdater:
                 bar_format=f"{{l_bar}}{GREEN}{{bar}}{RESET} {{percentage:3.0f}}%| {{n_fmt}}/{{total_fmt}}",
                 dynamic_ncols=True,
                 leave=False,
-                initial=0
+                initial=0,
             )
         return self.bar
 
@@ -47,8 +52,8 @@ class FirmwareUpdater:
         """Print a custom loading bar to the console."""
         percent = f"{100 * (iteration / float(total)):.1f}"
         filled_length = int(length * iteration // total)
-        bar = '█' * filled_length + '-' * (length - filled_length)
-        print(f'\r{bar} {percent}% Available', end='\r')
+        bar = "█" * filled_length + "-" * (length - filled_length)
+        print(f"\r{bar} {percent}% Available", end="\r")
 
         if iteration == total:
             print()
@@ -88,14 +93,18 @@ class FirmwareUpdater:
 
             if increment > 0:
                 self.bar.update(increment)
-                self.last_progress = cumulative_progress  # Update last_progress to cumulative value
+                self.last_progress = (
+                    cumulative_progress  # Update last_progress to cumulative value
+                )
                 self.current_progress = progress
 
         if "updater_callback - done" in line:
             if self.current_progress < 100:
                 increment = (100 + self.base_progress) - self.last_progress
                 if increment > 0:
-                    self.bar.update(increment)  # Complete the current component's progress
+                    self.bar.update(
+                        increment
+                    )  # Complete the current component's progress
                     self.last_progress += increment
 
             self.base_progress += 100
@@ -113,7 +122,6 @@ class FirmwareUpdater:
             return True
 
         return False
-
 
     def run_update_process(self, qq: queue.Queue, shutdown_flag: Any):
         """Handle the full update process using the tqdm progress bar."""
@@ -138,7 +146,7 @@ class FirmwareUpdater:
                         print(line)
 
                     if "updater_callback - done" in line:
-                        counter += 1   
+                        counter += 1
 
             except queue.Empty:
                 continue
