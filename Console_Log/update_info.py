@@ -1,7 +1,11 @@
 import queue
 import re
+import sys
 from typing import Any, Optional, Tuple
 
+sys.path.extend("Server_App")
+
+from Server_App.config import config
 from colorama import Fore
 from colorama import init as colorama_init
 from tqdm import tqdm
@@ -10,11 +14,6 @@ colorama_init(autoreset=True)
 
 GREEN = "\033[92m"
 RESET = "\033[0m"
-
-DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
-UPDATE_USECASE_PATTERN = (
-    "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
-)
 
 
 class FirmwareUpdater:
@@ -32,7 +31,7 @@ class FirmwareUpdater:
         """Create a tqdm progress bar."""
         if not self.bar:
             self.bar = tqdm(
-                total=500,
+                total=config.COMPONETS_FOR_UPDATES * 100,
                 desc="Downloading",
                 bar_format=f"{{l_bar}}{GREEN}{{bar}}{RESET} {{percentage:3.0f}}%| {{n_fmt}}/{{total_fmt}}",
                 dynamic_ncols=True,
@@ -48,12 +47,12 @@ class FirmwareUpdater:
             return int(match.group(1)), int(match.group(2))
         return None, None
 
-    def print_loading_bar(self, iteration: int, total: int, length: int = 50) -> bool:
+    def print_loading_bar(self, iteration: int, total: int, length: int = 70) -> bool:
         """Print a custom loading bar to the console."""
         percent = f"{100 * (iteration / float(total)):.1f}"
         filled_length = int(length * iteration // total)
         bar = "█" * filled_length + "-" * (length - filled_length)
-        print(f"\r{bar} {percent}% Available", end="\r")
+        print(f"\r{bar} {percent}% Preparing files...", end="\r")
 
         if iteration == total:
             print()
@@ -65,7 +64,7 @@ class FirmwareUpdater:
 
     def check_if_update_available(self, line: str) -> bool:
         """Check for the presence of an update from the diagnostics log line."""
-        if DIAGNOSTICS_PATTERN in line:
+        if config.DIAGNOSTICS_PATTERN in line:
             current, total = self.parse_progress(line)
             if current is not None and total is not None:
                 if self.print_loading_bar(current, total):
@@ -74,7 +73,7 @@ class FirmwareUpdater:
         return False
 
     def update_board(self, line: str) -> bool:
-        if UPDATE_USECASE_PATTERN in line:
+        if config.UPDATE_USECASE_PATTERN in line:
             print("Updating to selected version...")
 
         match = self.ota_pattern.search(line)
@@ -110,7 +109,8 @@ class FirmwareUpdater:
             self.base_progress += 100
             self.current_progress = 0  # Reset current progress for the next component
 
-        if self.last_progress >= 500:
+        if self.last_progress >= config.COMPONETS_FOR_UPDATES * 100:
+            config.CURRENT_UPDATE_COMPLETED = True
             self.base_progress = 0
             self.last_progress = 0
             self.current_progress = 0
@@ -138,7 +138,7 @@ class FirmwareUpdater:
         while not shutdown_flag.is_set():
             try:
                 line = qq.get(timeout=1)
-                if counter >= 5:
+                if counter >= config.COMPONETS_FOR_UPDATES:
                     counter = 0
                     return
                 else:

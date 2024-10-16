@@ -28,6 +28,13 @@ SELECT_MODE = "/html/body/div[2]/div[2]/div/mat-dialog-container/app-device-reg/
 SELECT_LEASE_MODE = "/html/body/div[2]/div[4]/div/div/div/mat-option[3]/span"
 BOTTOM_MASSAGE = '//*[@id="toast-container"]'
 
+# Update settings
+COMPONETS_FOR_UPDATES = 5
+DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
+UPDATE_USECASE_PATTERN = (
+    "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
+)
+CURRENT_UPDATE_COMPLETED = False
 # Current test
 # //////////////////////////////////////////////
 FIRST_TEST = True
@@ -35,5 +42,3 @@ CURRENT_USERNAME = "abachev"
 CURRENT_PASSWORD = "RideTheWaves@8am"
 CURRENT_SERIAL_NUM = "53991"
 CURRENT_MODE = {"p": "Private", "b": "Business", "l": "Lease"}
-UPDATED = False
-CURRENT_WANTED_VER = "2.3-377"
