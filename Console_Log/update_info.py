@@ -21,7 +21,9 @@ class FirmwareUpdater:
         self.update_counter = 0
         self.base_progress = 0
         self.last_progress = 0
-        self.current_progress = 0  # Track the current component's progress
+        self.current_progress = 0
+        self.restarts = 0
+        self.components_updated = 0  # Track the current component's progress
         self.progress_pattern = re.compile(r"\[(\d+)\s*/\s*(\d+)\]")
         self.ota_pattern = re.compile(r"progress (\d+)%")
         self.progress_started = False
@@ -98,6 +100,8 @@ class FirmwareUpdater:
                 self.current_progress = progress
 
         if "updater_callback - done" in line:
+            self.components_updated += 1
+
             if self.current_progress < 100:
                 increment = (100 + self.base_progress) - self.last_progress
                 if increment > 0:
@@ -109,16 +113,23 @@ class FirmwareUpdater:
             self.base_progress += 100
             self.current_progress = 0  # Reset current progress for the next component
 
+        if "BT_HCI: hcif disc complete: hdl 0x1, rsn 0x13" in line:
+            self.restarts += 1
+
+        if self.restarts >= 3:
+            config.CURRENT_UPDATE_COMPLETED = False
+            self.reset_progress()
+            print(Fore.RED + "\\UPDATE-FAILED!\\")
+            print(
+                Fore.YELLOW
+                + f"{config.COMPONENTS_UPDATED}/{config.COMPONETS_FOR_UPDATES} Updated..."
+            )
+            return True
+
         if self.last_progress >= config.COMPONETS_FOR_UPDATES * 100:
             config.CURRENT_UPDATE_COMPLETED = True
-            self.base_progress = 0
-            self.last_progress = 0
-            self.current_progress = 0
-            self.progress_started = False  # Reset progress flag
-            if self.bar:
-                self.bar.close()
-                self.bar = None  # Reset tqdm bar
-            print(Fore.GREEN + "\nUpdate completed successfully!")
+            self.reset_progress()
+            print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
             return True
 
         return False
@@ -134,19 +145,45 @@ class FirmwareUpdater:
                 continue  # If the queue is empty, continue the loop
 
     def show_detiled_update_info(self, qq: queue.Queue, shutdown_flag: Any):
-        counter = 0
         while not shutdown_flag.is_set():
             try:
                 line = qq.get(timeout=1)
-                if counter >= config.COMPONETS_FOR_UPDATES:
-                    counter = 0
+                if "BT_HCI: hcif disc complete: hdl 0x1, rsn 0x13" in line:
+                    self.restarts += 1
+
+                if "updater_callback" in line:
+                    print(line)
+
+                if "updater_callback - done" in line:
+                    self.components_updated += 1
+
+                if self.components_updated >= config.COMPONETS_FOR_UPDATES:
+                    print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
+                    self.components_updated = 0
                     return
                 else:
-                    if "updater_callback -" in line:
-                        print(line)
-
-                    if "updater_callback - done" in line:
-                        counter += 1
+                    if self.restarts >= 3:
+                        print(Fore.RED + "\\UPDATE-FAILED!\\")
+                        print(
+                            Fore.YELLOW
+                            + f"{self.components_updated}/{config.COMPONETS_FOR_UPDATES} Updated..."
+                        )
+                        self.restarts = 0
+                        self.components_updated = 0
+                        return shutdown_flag.is_set()
 
             except queue.Empty:
                 continue
+
+    def reset_progress(self):
+        """Reset all progress variables."""
+        self.base_progress = 0
+        self.last_progress = 0
+        self.current_progress = 0
+        config.COMPONENTS_UPDATED = self.components_updated
+        self.components_updated = 0
+        self.restarts = 0
+        self.progress_started = False
+        if self.bar:
+            self.bar.close()
+            self.bar = None

@@ -24,12 +24,12 @@ thick_border = Border(
 
 # Define the path to your desired directory and file
 file_directory = r"D:\Documents\Custom Office Templates\Desktop\Update Tables Data"
-file_path = os.path.join(file_directory, "test_updates.xlsx")
+file_path = os.path.join(file_directory, f"Test Updates for v2.3-539.xlsx")
 
 # Create a new Workbook and select the active worksheet
 wb = Workbook()
 ws = wb.active
-ws.title = "Random Test"
+ws.title = f"Updates on v2.3-539"
 
 
 # Function to add the constant header lines at the top of every worksheet
@@ -62,7 +62,14 @@ for row in range(1, 51):
 
 
 # Function to add a test update table at a specified starting row
-def add_update_table(ws, start_row):
+def add_update_table(
+    ws,
+    start_row,
+    tests,
+    ver1,
+    ver2,
+    progres_list,
+):
     """
     Adds a formatted update table starting from the specified row in the given worksheet.
 
@@ -70,14 +77,15 @@ def add_update_table(ws, start_row):
     :param start_row: The starting row index for the table.
     """
     # Define the table headers and values
-    headers = ["Version", "Board", "Sensor Hub", "Battery", "Remote", "Notes"]
+
+    headers = ["ver", "Board", "Sensor Hub", "Battery", "Remote", "Notes"]
 
     # Add the header row for the table
     for col, header in enumerate(headers, start=2):  # Columns B to G
         ws.cell(row=start_row, column=col).value = header
 
     # Create empty rows below the header for data input
-    for row_idx in range(start_row + 1, start_row + 6):  # 5 rows for data input
+    for row_idx in range(start_row + 1, start_row + tests):  # 5 rows for data input
         for col_idx in range(2, 8):  # Columns B to G
             ws.cell(row=row_idx, column=col_idx).border = (
                 thick_border  # Apply thick border to each cell
@@ -85,10 +93,10 @@ def add_update_table(ws, start_row):
 
 
 # Add the first table starting at row 7
-add_update_table(ws, 7)
+# add_update_table(ws, 7)
 
 # Add a second table 2 rows below the previous one (previous one ends at row 12, so next starts at row 14)
-add_update_table(ws, 14)
+# add_update_table(ws, 14)
 
 # Check if the directory exists, and create it if not
 if not os.path.exists(file_directory):

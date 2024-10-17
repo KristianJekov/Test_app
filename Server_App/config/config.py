@@ -30,6 +30,7 @@ BOTTOM_MASSAGE = '//*[@id="toast-container"]'
 
 # Update settings
 COMPONETS_FOR_UPDATES = 5
+COMPONENTS_UPDATED = 0
 DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
 UPDATE_USECASE_PATTERN = (
     "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
@@ -40,5 +41,5 @@ CURRENT_UPDATE_COMPLETED = False
 FIRST_TEST = True
 CURRENT_USERNAME = "abachev"
 CURRENT_PASSWORD = "RideTheWaves@8am"
-CURRENT_SERIAL_NUM = "53991"
+CURRENT_SERIAL_NUM = "53998"
 CURRENT_MODE = {"p": "Private", "b": "Business", "l": "Lease"}
