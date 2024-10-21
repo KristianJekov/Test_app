@@ -99,8 +99,13 @@ class FirmwareUpdater:
                 )
                 self.current_progress = progress
 
+        if "updater_callback - progress 10%" in line:
+            component_status = 0
+
         if "updater_callback - done" in line:
             self.components_updated += 1
+            component_status = 1
+            config.COMPONENTS_UPDATED_LIST.append(component_status)
 
             if self.current_progress < 100:
                 increment = (100 + self.base_progress) - self.last_progress
@@ -124,12 +129,14 @@ class FirmwareUpdater:
                 Fore.YELLOW
                 + f"{config.COMPONENTS_UPDATED}/{config.COMPONETS_FOR_UPDATES} Updated..."
             )
+            print(config.COMPONENTS_UPDATED_LIST)
             return True
 
         if self.last_progress >= config.COMPONETS_FOR_UPDATES * 100:
             config.CURRENT_UPDATE_COMPLETED = True
             self.reset_progress()
             print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
+            print(config.COMPONENTS_UPDATED_LIST)
             return True
 
         return False
@@ -151,15 +158,22 @@ class FirmwareUpdater:
                 if "BT_HCI: hcif disc complete: hdl 0x1, rsn 0x13" in line:
                     self.restarts += 1
 
-                if "updater_callback" in line:
+                if "updater_callback - " in line:
                     print(line)
+
+                if "updater_callback - progress 10%" in line:
+                    component_status = 0
 
                 if "updater_callback - done" in line:
                     self.components_updated += 1
+                    component_status = 1
+                    config.COMPONENTS_UPDATED_LIST.append(component_status)
 
                 if self.components_updated >= config.COMPONETS_FOR_UPDATES:
+
                     print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
                     self.components_updated = 0
+                    print(config.COMPONENTS_UPDATED_LIST)
                     return
                 else:
                     if self.restarts >= 3:
@@ -168,6 +182,8 @@ class FirmwareUpdater:
                             Fore.YELLOW
                             + f"{self.components_updated}/{config.COMPONETS_FOR_UPDATES} Updated..."
                         )
+                        print(config.COMPONENTS_UPDATED_LIST)
+
                         self.restarts = 0
                         self.components_updated = 0
                         return shutdown_flag.is_set()

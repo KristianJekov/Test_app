@@ -85,6 +85,9 @@ def update_menu(
         f_version = input("Version 1: ")
         s_version = input("Version 2: ")
 
+        config.CURRENT_UPDATE_LOOPER_SETTINGS["amount"] = amount
+        config.CURRENT_UPDATE_LOOPER_SETTINGS["f_version"] = f_version
+        config.CURRENT_UPDATE_LOOPER_SETTINGS["s_version"] = s_version
         # Ask for detailed info only once for the entire loop
         show_info = input("Show detailed info for updates? (y/n): ")
 

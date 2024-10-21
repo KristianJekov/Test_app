@@ -1,20 +1,17 @@
 import os
-
-from openpyxl import Workbook
+from colorama import Fore
+from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Border, PatternFill, Side
 
-# Define fill colors for the status indicators
-green_fill = PatternFill(
-    start_color="26DE22", end_color="26DE22", fill_type="solid"
-)  # Green color
-red_fill = PatternFill(
-    start_color="EF4B11", end_color="EF4B11", fill_type="solid"
-)  # Red color
-yellow_fill = PatternFill(
-    start_color="F7EC09", end_color="F7EC09", fill_type="solid"
-)  # Yellow color
+# Assume the file directory is defined
+file_directory = r"D:\Documents\Custom Office Templates\Desktop\Update Tables Data"
+file_path = os.path.join(file_directory, f"Test Updates for v2.3-539.xlsx")
 
-# Define border style for the table cells
+# Define some style objects (colors, borders, etc.)
+green_fill = PatternFill(start_color="26DE22", end_color="26DE22", fill_type="solid")
+yellow_fill = PatternFill(start_color="F7EC09", end_color="F7EC09", fill_type="solid")
+red_fill = PatternFill(start_color="EF4B11", end_color="EF4B11", fill_type="solid")
+
 thick_border = Border(
     left=Side(style="thick"),
     right=Side(style="thick"),
@@ -22,22 +19,11 @@ thick_border = Border(
     bottom=Side(style="thick"),
 )
 
-# Define the path to your desired directory and file
-file_directory = r"D:\Documents\Custom Office Templates\Desktop\Update Tables Data"
-file_path = os.path.join(file_directory, f"Test Updates for v2.3-539.xlsx")
-
-# Create a new Workbook and select the active worksheet
-wb = Workbook()
-ws = wb.active
-ws.title = f"Updates on v2.3-539"
-
 
 # Function to add the constant header lines at the top of every worksheet
 def add_constant_header(ws):
     """
     Adds the constant header rows (status indicators) at the top of the worksheet.
-
-    :param ws: The active worksheet to add the constant headers to.
     """
     ws["B2"].fill = green_fill
     ws["C2"] = "Test Passed"
@@ -47,62 +33,62 @@ def add_constant_header(ws):
     ws["C4"] = "Test Failed"
 
 
-# Add the constant header to the active worksheet
-add_constant_header(ws)
-
-# Set initial column widths for the worksheet
-ws.column_dimensions["A"].width = 6
-for col in ["B", "C", "D", "E", "F"]:
-    ws.column_dimensions[col].width = 20
-ws.column_dimensions["G"].width = 50
-
-# Set initial row heights for the worksheet
-for row in range(1, 51):
-    ws.row_dimensions[row].height = 20
-
-
-# Function to add a test update table at a specified starting row
-def add_update_table(
-    ws,
-    start_row,
-    tests,
-    ver1,
-    ver2,
-    progres_list,
-):
+# Function to add or update a test table starting from a specific row
+def add_update_table(ws, start_row, tests, ver1, ver2, progress_list):
     """
-    Adds a formatted update table starting from the specified row in the given worksheet.
-
-    :param ws: The active worksheet to add the table to.
-    :param start_row: The starting row index for the table.
+    Add or update a test table starting at a specific row.
     """
-    # Define the table headers and values
-
-    headers = ["ver", "Board", "Sensor Hub", "Battery", "Remote", "Notes"]
+    headers = [f"{ver1}->{ver2}", "Board", "Sensor Hub", "Battery", "Remote", "Notes"]
 
     # Add the header row for the table
     for col, header in enumerate(headers, start=2):  # Columns B to G
         ws.cell(row=start_row, column=col).value = header
 
-    # Create empty rows below the header for data input
-    for row_idx in range(start_row + 1, start_row + tests):  # 5 rows for data input
-        for col_idx in range(2, 8):  # Columns B to G
-            ws.cell(row=row_idx, column=col_idx).border = (
-                thick_border  # Apply thick border to each cell
-            )
+    # Add test rows based on provided data
+    for row_idx in range(start_row + 1, start_row + tests + 1):  # 5 rows for data
+        ws.cell(row=row_idx, column=2, value="test")  # Version in column B
+        ws.cell(
+            row=row_idx,
+            column=3,
+        )  # Version in column C
+        for col_idx, progress in enumerate(progress_list, start=3):  # Columns D to G
+            ws.cell(row=row_idx, column=col_idx).value = progress
+            ws.cell(row=row_idx, column=col_idx).border = thick_border  # Apply border
 
 
-# Add the first table starting at row 7
-# add_update_table(ws, 7)
+# Function to update components, ensuring no overwriting of existing content
+def update_components(file_path, components_updated, ver1, ver2, progress_list):
+    """
+    Update an existing workbook without overwriting manually edited content.
+    """
+    if os.path.exists(file_path):
+        # Load the existing workbook
+        wb = load_workbook(file_path)
+        ws = wb.active  # Assuming updates go to the active sheet
+        print(Fore.YELLOW + f"Workbook '{file_path}' found. Updating existing data.")
+    else:
+        # Create a new workbook and worksheet if it doesn't exist
+        wb = Workbook()
+        ws = wb.active
+        ws.title = f"Updates on v2.3-539"
+        print(Fore.YELLOW + f"New workbook created for '{file_path}'.")
+        add_constant_header(ws)  # Add header if new workbook
 
-# Add a second table 2 rows below the previous one (previous one ends at row 12, so next starts at row 14)
-# add_update_table(ws, 14)
+    # Find the next available row to avoid overwriting existing content
+    start_row = ws.max_row + 2  # Leave one row gap for spacing
 
-# Check if the directory exists, and create it if not
+    # Add the update table starting from the next available row
+    add_update_table(ws, start_row, components_updated, ver1, ver2, progress_list)
+
+    # Save the updated workbook
+    wb.save(file_path)
+    print(f"Excel file updated successfully at {file_path}")
+
+
+# Example usage
 if not os.path.exists(file_directory):
     os.makedirs(file_directory)
 
-# Save the workbook at the specified path
-wb.save(file_path)
-
-print(f"Excel file created successfully at {file_path}")
+# Progress list to be inserted into the table
+progress_list = ["1", "1", "1", "0", "N/A"]
+update_components(file_path, 5, "v2.2", "v2.3", progress_list)

@@ -31,6 +31,8 @@ BOTTOM_MASSAGE = '//*[@id="toast-container"]'
 # Update settings
 COMPONETS_FOR_UPDATES = 5
 COMPONENTS_UPDATED = 0
+COMPONENTS_UPDATED_LIST = []
+CURRENT_UPDATE_LOOPER_SETTINGS = {}
 DIAGNOSTICS_PATTERN = "diagnostics-service: DIAGN_FirmwareDownload:"
 UPDATE_USECASE_PATTERN = (
     "eFoil-remote-receiver: remote_receiver_set_usecase - new usecase: 7 ota"
