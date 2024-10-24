@@ -132,7 +132,10 @@ class FirmwareUpdater:
             self.components_updated_list = []
             return True
 
-        if self.last_progress >= config.COMPONETS_FOR_UPDATES * 100:
+        if (
+            self.last_progress >= config.COMPONETS_FOR_UPDATES * 100
+            and sum(self.components_updated_list) == config.COMPONETS_FOR_UPDATES
+        ):
             config.CURRENT_UPDATE_COMPLETED = True
             self.reset_progress()
             print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")

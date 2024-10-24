@@ -12,8 +12,9 @@ from Console_Log.update_info import (
 GREEN = "\033[92m"
 RESET = "\033[0m"
 
-sys.path.extend(["Console_Log", "Server_App"])
+sys.path.extend(["Console_Log", "Server_App", "Excel_Data"])
 
+from Excel_Data.excel_data_table_maker import *
 from Server_App.config import config
 from Server_App.utils.mode_select import registerate_device_in_mode
 from Server_App.utils.update_device import (
@@ -84,6 +85,9 @@ def update_menu(
         amount = int(input("Amount of updates: "))
         f_version = input("Version 1: ")
         s_version = input("Version 2: ")
+
+        create_empty_worksheet(amount, f_version, s_version)
+        print(f"Creating Excel worksheet...")
 
         config.CURRENT_UPDATE_LOOPER_SETTINGS["amount"] = amount
         config.CURRENT_UPDATE_LOOPER_SETTINGS["f_version"] = f_version
