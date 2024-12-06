@@ -43,5 +43,5 @@ CURRENT_UPDATE_COMPLETED = False
 FIRST_TEST = True
 CURRENT_USERNAME = "abachev"
 CURRENT_PASSWORD = "RideTheWaves@8am"
-CURRENT_SERIAL_NUM = "53998"
+CURRENT_SERIAL_NUM = "53991"
 CURRENT_MODE = {"p": "Private", "b": "Business", "l": "Lease"}
