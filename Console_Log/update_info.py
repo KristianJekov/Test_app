@@ -139,7 +139,6 @@ class FirmwareUpdater:
             config.CURRENT_UPDATE_COMPLETED = True
             self.reset_progress()
             print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
-            print(self.components_updated_list)
             self.components_updated_list = []
             return True
 
@@ -175,7 +174,8 @@ class FirmwareUpdater:
                 if sum(self.components_updated_list) >= config.COMPONETS_FOR_UPDATES:
 
                     print(Fore.GREEN + "\n\\UPDATE-SUCCESSFUL!\\")
-                    print(self.components_updated_list)
+                    self.components_updated_list = []
+                    self.reset_progress()
                     return
                 else:
                     if self.restarts >= 3:
@@ -184,10 +184,10 @@ class FirmwareUpdater:
                             Fore.YELLOW
                             + f"{sum(self.components_updated_list)}/{config.COMPONETS_FOR_UPDATES} Updated..."
                         )
-                        print(self.components_updated_list)
 
                         self.restarts = 0
                         self.reset_progress()
+                        self.components_updated_list = []
                         return shutdown_flag.is_set()
 
             except queue.Empty:
@@ -198,7 +198,6 @@ class FirmwareUpdater:
         self.base_progress = 0
         self.last_progress = 0
         self.current_progress = 0
-        # self.components_updated_list = []
         self.restarts = 0
         self.progress_started = False
         if self.bar:

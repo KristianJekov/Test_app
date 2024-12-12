@@ -31,8 +31,9 @@ def navigation_menu(
     while not shutdown_flag.is_set():
         print(Fore.LIGHTMAGENTA_EX + "------MAIN MENU-------")
 
-        device_id = input("Enter Device Serial Number: ")
-        config.CURRENT_SERIAL_NUM = device_id
+        if config.FIRST_TEST:
+            device_id = input("Enter Device Serial Number: ")
+            config.CURRENT_SERIAL_NUM = device_id
 
         answer = input(
             "u: Update device\n"
